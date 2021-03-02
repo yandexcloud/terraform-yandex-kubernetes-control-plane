@@ -1,0 +1,139 @@
+files:
+- path: /root/.ssh/id_rsa
+  mode: 0400
+  text: |
+    ${private_key}
+- path: /root/.ssh/id_rsa.pub
+  mode: 0400
+  text: |
+    ${public_key}
+- path: /var/lib/cni/net.d/10-default.conflist
+  text: |
+    {
+      "cniVersion": "0.3.1",
+      "name": "default",
+      "plugins": [
+        {
+          "type": "bridge",
+          "bridge": "cni0",
+          "isDefaultGateway": true,
+          "ipMasq": true,
+          "hairpinMode": true,
+          "ipam": {
+            "type": "host-local",
+            "subnet": "${pod_cidr}",
+            "gateway": "${pod_gateway}"
+          },
+          "dns": {
+            "nameservers": ["${pod_gateway}"]
+          }
+        },
+        {
+          "type": "portmap",
+          "capabilities": {
+            "portMappings": true
+          },
+          "snat": true
+        }
+      ]
+    }
+- path: /var/lib/cni/net.d/99-loopback.conf
+  text: |
+    {
+      "cniVersion": "0.2.0",
+      "type": "loopback"
+    }
+- path: /run/config/kubeadm/init.yaml
+  text: |
+    # https://godoc.org/k8s.io/kubernetes/cmd/kubeadm/app/apis/kubeadm/v1beta2#InitConfiguration
+    apiVersion: kubeadm.k8s.io/v1beta2
+    kind: InitConfiguration
+    nodeRegistration:
+      criSocket: /run/containerd/containerd.sock
+    certificateKey: ${certificate_key}
+    bootstrapTokens:
+    - token: ${token}
+      description: "kubeadm bootstrap token"
+      ttl: "0"
+    ---
+    # https://godoc.org/k8s.io/kubernetes/cmd/kubeadm/app/apis/kubeadm/v1beta2#ClusterConfiguration
+    apiVersion: kubeadm.k8s.io/v1beta2
+    kind: ClusterConfiguration
+    clusterName: "${name}"
+    kubernetesVersion: "${version}"
+    controlPlaneEndpoint: "${control_plane_endpoint}"
+    apiServer:
+      timeoutForControlPlane: "10m"
+    networking:
+      serviceSubnet: "${svc_cidr}"
+      podSubnet: "${pod_cidr}"
+      dnsDomain: "cluster.local"
+    dns:
+      type: "CoreDNS"
+    ---
+    # https://godoc.org/k8s.io/kubelet/config/v1beta1#KubeletConfiguration
+    apiVersion: kubelet.config.k8s.io/v1beta1
+    kind: KubeletConfiguration
+    staticPodPath: /etc/kubernetes/manifests
+    clusterDNS:
+    - "${cluster_dns}"
+    clusterDomain: "cluster.local"
+    cgroupsPerQOS: false
+    kubeReservedCgroup: "podruntime"
+    systemReservedCgroup: "systemreserved"
+    cgroupRoot: "kubepods"
+    enforceNodeAllocatable: []
+    ---
+    # https://godoc.org/k8s.io/kube-proxy/config/v1alpha1#KubeProxyConfiguration
+    apiVersion: kubeproxy.config.k8s.io/v1alpha1
+    kind: KubeProxyConfiguration
+    clusterCIDR: "${pod_cidr}"
+- path: /run/config/kubeadm/join.yaml
+  text: |
+    # https://godoc.org/k8s.io/kubernetes/cmd/kubeadm/app/apis/kubeadm/v1beta2#JoinConfiguration
+    apiVersion: kubeadm.k8s.io/v1beta2
+    kind: JoinConfiguration
+    nodeRegistration:
+      criSocket: /run/containerd/containerd.sock
+    discovery:
+      bootstrapToken:
+        apiServerEndpoint: ${control_plane_endpoint}:6443
+        token: ${token}
+        unsafeSkipCAVerification: true
+      timeout: "10m"
+    controlPlane:
+      certificateKey: ${certificate_key}
+- path: /run/config/kubelet/kubelet.yaml
+  text: |
+    # https://godoc.org/k8s.io/kubelet/config/v1beta1#KubeletConfiguration
+    apiVersion: kubelet.config.k8s.io/v1beta1
+    kind: KubeletConfiguration
+    staticPodPath: /etc/kubernetes/manifests
+    clusterDNS:
+    - "${cluster_dns}"
+    clusterDomain: "cluster.local"
+    cgroupsPerQOS: false
+    kubeReservedCgroup: "podruntime"
+    systemReservedCgroup: "systemreserved"
+    cgroupRoot: "kubepods"
+    enforceNodeAllocatable: []
+    authentication:
+      anonymous:
+        enabled: false
+      webhook:
+        cacheTTL: 0s
+        enabled: true
+      x509:
+        clientCAFile: /etc/kubernetes/pki/ca.crt
+    authorization:
+      mode: Webhook
+      webhook:
+        cacheAuthorizedTTL: 0s
+        cacheUnauthorizedTTL: 0s
+- path: /run/config/kubernetes
+  text: |
+    FOLDER=${folder}
+    GROUP=${group}
+- path: /run/config/init
+  text: |
+    https://docs.projectcalico.org/manifests/calico.yaml
