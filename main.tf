@@ -39,7 +39,7 @@ resource "random_string" "certificate_key" {
 locals {
   token   = "${random_string.token_head.result}.${random_string.token_tail.result}"
   certkey = substr(lower(format("%X", random_string.certificate_key.id)), 0, 64)
-  group   = "${var.prefix}masters"
+  group   = "${var.name}-masters"
 
   pod_gateway = cidrhost(var.pod_cidr, 1)
   cluster_dns = cidrhost(var.svc_cidr, 2)
@@ -51,8 +51,8 @@ resource "yandex_compute_instance_group" "masters" {
   service_account_id = var.sa
 
   instance_template {
-    name               = "${var.prefix}master-{instance.index}"
-    hostname           = "${var.prefix}master-{instance.index}"
+    name               = "${var.name}-master-{instance.index}"
+    hostname           = "${var.name}-master-{instance.index}"
     platform_id        = var.platform_id
     service_account_id = var.sa
 

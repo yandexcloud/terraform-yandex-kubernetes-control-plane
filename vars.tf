@@ -3,9 +3,9 @@ variable "folder_id" {
   description = "Yandex Folder ID where to deploy resoruces."
 }
 
-variable "prefix" {
-  default     = ""
-  description = "Prefix for resource names."
+variable "name" {
+  type        = string
+  description = "Cluser name."
 }
 
 variable "zones" {
@@ -93,11 +93,6 @@ variable "control_plane_endpoint" {
   description = "Stable control plane endpoint, it's recommended to use DNS name of an API proxy."
 }
 
-variable "name" {
-  type        = string
-  description = "Cluser name."
-}
-
 variable "kubernetes_version" {
   type        = string
   description = "Kubernetes version."
@@ -112,48 +107,3 @@ variable "svc_cidr" {
   default     = "10.96.0.0/16"
   description = "Service subnet CIDR."
 }
-
-# variable "domain" {
-#   type        = string
-#   description = "Public domain name in AWS Route53."
-# }
-
-# variable "aws_region" {
-#   type        = string
-#   description = "AWS region used to assume role to access Route53."
-# }
-
-# variable "aws_role_arn" {
-#   type        = string
-#   description = "ARN of the AWS role to assume to access Route53."
-# }
-
-# variable "aws_access_key" {
-#   type        = string
-#   description = "AWS access key ID used to assume role to access Route53."
-# }
-
-# variable "aws_secret_key" {
-#   type        = string
-#   description = "AWS secret access key used to assume role to access Route53."
-# }
-
-# variable "eproxy_image" {
-#   type        = string
-#   description = "Name of image build from github.com/yandexcloud/eproxy, used for API proxy."
-# }
-
-# variable "eproxy_sa" {
-#   type        = string
-#   description = "ID of a service account used in API proxy VMs."
-# }
-
-# variable "eproxy_platform_id" {
-#   default     = "standard-v2"
-#   description = "Platform ID used for API proxy VMs."
-# }
-
-# variable "eproxy_cores" {
-#   default     = 2
-#   description = "Number of cores of API proxy VMs."
-# }
