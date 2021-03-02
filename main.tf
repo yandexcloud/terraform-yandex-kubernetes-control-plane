@@ -51,8 +51,8 @@ resource "yandex_compute_instance_group" "masters" {
   service_account_id = var.sa
 
   instance_template {
-    name               = "${var.prefix}-master-{instance.index}"
-    hostname           = "${var.prefix}-master-{instance.index}"
+    name               = "${var.prefix}master-{instance.index}"
+    hostname           = "${var.prefix}master-{instance.index}"
     platform_id        = var.platform_id
     service_account_id = var.sa
 
