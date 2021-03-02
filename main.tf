@@ -46,6 +46,7 @@ locals {
 }
 
 resource "yandex_compute_instance_group" "masters" {
+  folder_id          = var.folder_id
   name               = local.group
   service_account_id = var.sa
 
@@ -93,7 +94,7 @@ resource "yandex_compute_instance_group" "masters" {
         version                = var.kubernetes_version
         certificate_key        = local.certkey
         token                  = local.token
-        folder                 = data.yandex_resourcemanager_folder.folder.id
+        folder                 = var.folder_id
         group                  = local.group
         pod_cidr               = var.pod_cidr
         pod_gateway            = local.pod_gateway

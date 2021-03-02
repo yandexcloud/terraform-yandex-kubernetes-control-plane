@@ -1,6 +1,6 @@
-variable "folder" {
+variable "folder_id" {
   type        = string
-  description = "Yandex Folder name where to deploy resoruces."
+  description = "Yandex Folder ID where to deploy resoruces."
 }
 
 variable "prefix" {
@@ -34,7 +34,7 @@ variable "platform_id" {
 }
 
 variable "enable_serial_port" {
-  defdefault  = false
+  default  = false
   description = "Indicates whether to enable serial port for control plane VMs."
 }
 
