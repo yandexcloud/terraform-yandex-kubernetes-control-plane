@@ -85,7 +85,7 @@ resource "yandex_compute_instance_group" "masters" {
     }
 
     metadata = {
-      ssh-keys           = join("\n", concat(var.ssh_keys, tls_private_key.pk.public_key_openssh))
+      ssh-keys           = join("\n", concat(var.ssh_keys, [tls_private_key.pk.public_key_openssh]))
       serial-port-enable = var.enable_serial_port ? 1 : 0
 
       user-data = templatefile("${path.module}/userdata.yml", {
