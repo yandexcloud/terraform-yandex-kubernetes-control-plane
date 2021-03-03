@@ -100,7 +100,7 @@ resource "yandex_compute_instance_group" "masters" {
         pod_gateway            = local.pod_gateway
         svc_cidr               = var.svc_cidr
         cluster_dns            = local.cluster_dns
-        private_key            = indent(tls_private_key.pk.private_key_pem, 4)
+        private_key            = indent(4, tls_private_key.pk.private_key_pem)
         public_key             = tls_private_key.pk.public_key_openssh
       })
     }
