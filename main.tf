@@ -65,7 +65,7 @@ resource "yandex_compute_instance_group" "masters" {
     boot_disk {
       mode = "READ_WRITE"
       initialize_params {
-        image_id = var.image
+        image_id = var.image_id
         size     = var.boot_disk_size
         type     = var.boot_disk_type
       }
