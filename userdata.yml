@@ -1,9 +1,9 @@
 files:
-- path: /root/.ssh/id_rsa
+- path: /run/config/ssh/id_rsa
   mode: 0400
   text: |
     ${private_key}
-- path: /root/.ssh/id_rsa.pub
+- path: /run/config/ssh/id_rsa.pub
   mode: 0400
   text: |
     ${public_key}

@@ -23,9 +23,9 @@ variable "preemptible" {
   description = "Use preemptible VMs for control plane."
 }
 
-variable "image" {
+variable "image_id" {
   type        = string
-  description = "Name of a LinuxKit based image build from github.com/yandexcloud/kubernetes."
+  description = "ID of a LinuxKit based image build from github.com/yandexcloud/kubernetes."
 }
 
 variable "platform_id" {
